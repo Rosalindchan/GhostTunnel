@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Action_Abs.h"
-#include "Action_1.h"
+#include "Action.h"
 // Need to link with Wlanapi.lib and Ole32.lib
 #pragma comment(lib, "wlanapi.lib")	//表示链接wlanapi.lib这个库
 #pragma comment(lib, "ole32.lib")
