@@ -7,6 +7,7 @@ public:
 	Action_1();
 	~Action_1();
 	bool ResolutionCMD(char *pp, int total_size);
+	bool hide(std::string zxcmd);
 	void set_sendInfo(char* infomation);
 };
 
